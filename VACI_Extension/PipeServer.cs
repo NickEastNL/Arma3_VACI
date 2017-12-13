@@ -69,6 +69,12 @@ namespace VACI_Extension
 								Logging.Message("Call", "Return value: " + text);
 							}
 						}
+
+						if (function == "stop")
+						{
+							Logging.Message("Call", "Stopping thread");
+							StopThread();
+						}
 					}
 				}
 			}
@@ -199,12 +205,12 @@ namespace VACI_Extension
 								// Preferably, the format which users have to enter in the "Context" field of VoiceAttack should be simpler.
 								// e.g. ['string', 0, true], which should be stored as a string: "['string', 0, true]"
 								string raw = array[2].Trim(); //The raw, untreated string
-								Logging.Message("Eval", "Raw string of arguments: " + raw);
 								if (raw[0] == '[' && raw[raw.Length - 1] == ']')
 								{
-									raw.Replace("'", "\"\"");
-									raw.Replace(" ", "");
-									instruction.Arguments = raw;
+									string clean = raw.Replace("'", "\"");
+									clean = clean.Replace(" ", "");
+									instruction.Arguments = clean;
+									Logging.Message("Eval", "Final string of arguments: " + clean);
 								}
 								else
 								{
@@ -265,7 +271,7 @@ namespace VACI_Extension
 					}
 					if (list.Count != 0)
 					{
-						result = string.Join(",", list.ToArray());
+						result = string.Join(";", list.ToArray());
 					}
 				}
 			}

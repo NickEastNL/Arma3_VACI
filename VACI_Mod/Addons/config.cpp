@@ -27,6 +27,11 @@ class CfgFunctions
 				file="\VACI\listener.sqf";
 				description="Listens to VoiceAttack and relays data to Arma";
 			};
+			class Shutdown
+			{
+				file="\VACI\exit.sqf";
+				description="Shuts down plugin";
+			};
 		};
 	};
 };
