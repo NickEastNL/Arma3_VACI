@@ -193,20 +193,22 @@ namespace VACI_Extension
 							instruction.Type = array[0].Trim();
 							instruction.Parameter = array[1].Trim() + ".sqf"; // Add proper folder path to the script files
 
-							if (!string.IsNullOrEmpty(array[2]))
+							if (array.Length >= 3)
 							{
 								// Array string needs to be the following format to work "[""string"",0,true]" (no whitespace)
 								// Preferably, the format which users have to enter in the "Context" field of VoiceAttack should be simpler.
 								// e.g. ['string', 0, true], which should be stored as a string: "['string', 0, true]"
 								string raw = array[2].Trim(); //The raw, untreated string
-
+								Logging.Message("Eval", "Raw string of arguments: " + raw);
 								if (raw[0] == '[' && raw[raw.Length - 1] == ']')
 								{
-
+									raw.Replace("'", "\"\"");
+									raw.Replace(" ", "");
+									instruction.Arguments = raw;
 								}
 								else
 								{
-									Logging.Message("Eval", "Optional arguments not formatted properly: " + raw);
+									Logging.Message("Eval", "Optional arguments not formatted as array: " + raw);
 								}
 							}
 						}
