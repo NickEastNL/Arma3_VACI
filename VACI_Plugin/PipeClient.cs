@@ -11,15 +11,6 @@ namespace VACI_Plugin
 {
 	class PipeClient
 	{
-		private class Instruction
-		{
-			public string Type = string.Empty;
-
-			public string Parameter = string.Empty;
-
-			public string Arguments = string.Empty;
-		}
-
 		static string pipeName = "VACI";
 
 		private static Thread pipeSenderThread;

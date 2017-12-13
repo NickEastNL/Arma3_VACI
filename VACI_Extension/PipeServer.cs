@@ -24,7 +24,7 @@ namespace VACI_Extension
 		static bool serverIsRunning = false;
 
 		static Thread pipeServerThread = null;
-		static ConcurrentQueue<string> inQueue = new ConcurrentQueue<string>();
+		static ConcurrentQueue<Instruction> inQueue = new ConcurrentQueue<Instruction>();
 
 		public static void StartThread()
 		{
@@ -63,7 +63,11 @@ namespace VACI_Extension
 						if (function == "get")
 						{
 							text = Get();
-							Logging.Message("Call", "Return value: " + text);
+
+							if (!string.IsNullOrEmpty(text))
+							{
+								Logging.Message("Call", "Return value: " + text);
+							}
 						}
 					}
 				}
@@ -104,7 +108,12 @@ namespace VACI_Extension
 								goto DISCONNECT;
 							}
 
-							inQueue.Enqueue(pipeMessage);
+							bool isEvaluated = EvalPipeMessage(pipeMessage);
+
+							if (!isEvaluated)
+							{
+								goto DISCONNECT;
+							}
 							Logging.Message("Server", "Message received and queued.");
 						}
 						catch (Exception ex)
@@ -149,26 +158,118 @@ namespace VACI_Extension
 			return text.Trim();
 		}
 
-		private static string Get()
+		private static bool EvalPipeMessage(string message)
 		{
-			string result;
+			bool result = false;
 
-			string text = string.Empty;
+			string a = message.ToLower();
 
-			while (!inQueue.IsEmpty)
+			try
 			{
-				string queueItem = string.Empty;
-				bool deQueue = inQueue.TryDequeue(out queueItem);
-				if (deQueue)
+				if (!string.IsNullOrEmpty(a))
 				{
-					text = queueItem;
+					Logging.Message("Eval", "Message received and parsing: " + message);
+
+					string[] array = message.Split(new string[] { ";" }, StringSplitOptions.None);
+					Instruction instruction = new Instruction();
+
+					string b = array[0].Trim();
+					if (b == "code")
+					{
+						if (array.Length >= 2)
+						{
+							instruction.Type = array[0].Trim();
+							instruction.Parameter = array[1].Trim();
+						}
+						else
+						{
+							Logging.Message("Eval", "Expecting a 'code' instruction with a single line of code.");
+						}
+					}
+					else if (b == "script")
+					{
+						if (array.Length >= 2)
+						{
+							instruction.Type = array[0].Trim();
+							instruction.Parameter = array[1].Trim() + ".sqf"; // Add proper folder path to the script files
+
+							if (!string.IsNullOrEmpty(array[2]))
+							{
+								// Array string needs to be the following format to work "[""string"",0,true]" (no whitespace)
+								// Preferably, the format which users have to enter in the "Context" field of VoiceAttack should be simpler.
+								// e.g. ['string', 0, true], which should be stored as a string: "['string', 0, true]"
+								string raw = array[2].Trim(); //The raw, untreated string
+
+								if (raw[0] == '[' && raw[raw.Length - 1] == ']')
+								{
+
+								}
+								else
+								{
+									Logging.Message("Eval", "Optional arguments not formatted properly: " + raw);
+								}
+							}
+						}
+						else
+						{
+							Logging.Message("Eval", "Expecting a 'script' instruction with filename and optionally an array of arguments");
+						}
+					}
+
+					if (!string.IsNullOrEmpty(instruction.Type) && !string.IsNullOrEmpty(instruction.Parameter))
+					{
+						inQueue.Enqueue(instruction);
+						Logging.Message("Eval", "Message added to queue");
+					}
+
+					result = true;
+				}
+				else
+				{
+					Logging.Message("Eval", "Message was empty");
 				}
 			}
-
-			result = text;
-			if (!string.IsNullOrEmpty(result))
+			catch (Exception ex)
 			{
-				Logging.Message("Get", "Message returns: " + result);
+				Logging.Error("Eval", "Error: " + ex.Message);
+				result = false;
+			}
+
+			return result;
+		}
+
+		private static string Get()
+		{
+			string result = string.Empty;
+
+			try
+			{
+				List<string> list = new List<string>();
+
+				while (!inQueue.IsEmpty)
+				{
+					Instruction instruction = null;
+
+					bool isDequeued = inQueue.TryDequeue(out instruction);
+					if (isDequeued)
+					{
+						list.Add(string.Concat(new string[] {
+							instruction.Type,
+							"|",
+							instruction.Parameter,
+							string.IsNullOrEmpty(instruction.Arguments) ? "" : "|",
+							instruction.Arguments
+						}));
+					}
+					if (list.Count != 0)
+					{
+						result = string.Join(",", list.ToArray());
+					}
+				}
+			}
+			catch (Exception ex)
+			{
+				Logging.Error("Get", "Error: " + ex.Message);
 			}
 			return result;
 		}
