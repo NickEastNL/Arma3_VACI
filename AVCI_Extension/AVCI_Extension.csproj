@@ -81,6 +81,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Commands\Command.cs" />
+    <Compile Include="Commands\CommandPart.cs" />
+    <Compile Include="Commands\Subject.cs" />
+    <Compile Include="Components\CommandList.cs" />
+    <Compile Include="Components\Instruction.cs" />
     <Compile Include="Components\VoiceRecognizer.cs" />
     <Compile Include="Core.cs" />
     <Compile Include="DllEntry.cs" />
@@ -90,9 +95,7 @@
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Commands\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PreBuildEvent>cd $(TargetDir)

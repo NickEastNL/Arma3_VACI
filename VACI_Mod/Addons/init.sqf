@@ -1,5 +1,5 @@
-"VACI_Extension" callExtension ""; //Initalizes Extension to start server thread and accept a connection without processing anything
+"AVCI_Extension" callExtension "init";
 
-waitUntil {!isNull player};
+waitUntil{!isNull player};
 
-[] execVM "\VACI\listener.sqf";
+execVM "listener.sqf";

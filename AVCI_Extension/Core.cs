@@ -1,13 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Collections.Concurrent;
 
 namespace AVCI_Extension
 {
 	class Core
 	{
+		public static ConcurrentQueue<string> outQueue = new ConcurrentQueue<string>();
+
 		#region Handling
 
 		public static string HandleCall(string function)
@@ -25,10 +24,11 @@ namespace AVCI_Extension
 							result = "init";
 							break;
 						case "exit": // Stops everything
+							Shutdown();
 							result = "exit";
 							break;
 						case "get": // Empties the queue and sends instructions to Arma
-							result = "get";
+							result = GetInstruction();
 							break;
 						case "start-listen": // Start listening
 							result = "start-listen";
@@ -51,6 +51,30 @@ namespace AVCI_Extension
 
 		#endregion
 
+		private static string GetInstruction()
+		{
+			string result = string.Empty;
+
+			try
+			{
+				string item;
+
+				bool success = outQueue.TryDequeue(out item);
+
+				if (success)
+				{
+					result = item;
+					Logging.Message("GetInstruction", item);
+				}
+			}
+			catch (Exception ex)
+			{
+				Logging.Error("GetInstruction", "Failed with error: " + ex.Message);
+			}
+
+			return result;
+		}
+
 		#region Public Properties
 
 		public static VoiceRecognizer Recognizer
@@ -62,7 +86,23 @@ namespace AVCI_Extension
 
 		private static void Initialize()
 		{
-			Recognizer = new VoiceRecognizer();
+			if (Recognizer == null)
+			{
+				Recognizer = new VoiceRecognizer();
+			}
+			else
+			{
+				Logging.Message("Init", "Voice Recognizer already running");
+			}
+		}
+
+		private static void Shutdown()
+		{
+			if (Recognizer != null)
+			{
+				Recognizer.Dispose();
+				Recognizer.Dispose();
+			}
 		}
 
 		#endregion
