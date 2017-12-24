@@ -1,0 +1,78 @@
+Move (1)
+
+1 Return to Formation
+2 Advance
+3 Stay Back
+4 Flank Left
+5 Flank Right
+6 Stop
+7 Find cover
+8 Next waypoint
+
+Target (2)
+1-9 Targets
+
+Engage (3)
+1 Open fire
+2 Hold fire
+3 Fire
+4 Engage
+5 Engage at will
+6 Disengage
+7 Scan horizon
+8 Watch Direction
+9 Suppressive fire
+
+Mount (4)
+1 Disembark
+2-0 Vehicles
+
+Status (5)
+1 Call support
+2 Fuel low
+3 Ammo low
+4 Injured
+5 Report Status
+6 I'm under fire
+7 One Less
+8 ... is down
+
+Combat Mode (7)
+1 Stealth
+2 Combat
+3 Aware
+4 Safe
+6 Stand Up
+7 Stay crouched
+8 Go prone
+9 Automatic stance
+
+Formation (8)
+1 Column
+2 Staggered Column
+3 Wedge
+4 Echelon Left
+5 Echelon Right
+6 Vee
+7 Line
+8 File
+9 Diamond
+
+Assign (9)
+1 Red
+2 Green
+3 Blue
+4 Yellow
+5 White
+9 Team
+
+Reply (0)
+1 Done
+2 Negative
+3 Ready to fire
+4 Cannot fire
+6 Repeat
+7 Copy
+8 Supports
+9 Custom
+0 Radio

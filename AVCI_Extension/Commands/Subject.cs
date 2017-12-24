@@ -16,29 +16,14 @@ namespace AVCI_Extension
 			RuleList = new List<SrgsRule>();
 
 			// INDIVIDUAL
-			//List<SrgsItem> itemList = new List<SrgsItem>();
-			//for (int i = 0; i < 12; i++)
-			//{
-			//	SrgsItem newItem = GetNewNode(new string[] { GetTextFromInt(i) }, GetTextFromInt(i).ToUpper());
-			//	itemList.Add(newItem);
-			//}
+			List<SrgsItem> numbersList = new List<SrgsItem>();
 
-			//SrgsOneOf squadNumbersChoice = new SrgsOneOf(itemList.ToArray());
+			for (int num = 1; num < 25; num++)
+			{
+				numbersList.Add(GetNewNode(new string[] { num.ToString() }, num.ToString().ToUpper()));
+			}
 
-			SrgsItem one	= GetNewNode(new string[] { "one" }, "ONE");
-			SrgsItem two	= GetNewNode(new string[] { "two" }, "TWO");
-			SrgsItem three	= GetNewNode(new string[] { "three" }, "THREE");
-			SrgsItem four	= GetNewNode(new string[] { "four" }, "FOUR");
-			SrgsItem five	= GetNewNode(new string[] { "five" }, "FIVE");
-			SrgsItem six	= GetNewNode(new string[] { "six" }, "SIX");
-			SrgsItem seven	= GetNewNode(new string[] { "seven" }, "SEVEN");
-			SrgsItem eight	= GetNewNode(new string[] { "eight" }, "EIGHT");
-			SrgsItem nine	= GetNewNode(new string[] { "nine" }, "NINE");
-			SrgsItem ten	= GetNewNode(new string[] { "ten" }, "TEN");
-			SrgsItem eleven	= GetNewNode(new string[] { "eleven" }, "ELEVEN");
-			SrgsItem twelve	= GetNewNode(new string[] { "twelve" }, "TWELVE");
-
-			SrgsOneOf squadNumbersChoice = new SrgsOneOf(one, two, three, four, five, six, seven, eight, nine, ten, eleven, twelve);
+			SrgsOneOf squadNumbersChoice = new SrgsOneOf(numbersList.ToArray());
 			SrgsItem squadNumbersConcatChoice = new SrgsItem(squadNumbersChoice, new SrgsItem(0, 1, "and"));
 			squadNumbersConcatChoice.SetRepeat(1, 12);
 
@@ -57,10 +42,17 @@ namespace AVCI_Extension
 			all.Add(allItems);
 			RuleList.Add(all);
 
+			// DESELECT ALL (DISREGARD)
+			SrgsItem disregardItems = GetNewNode(new string[] { "disregard" }, "DISREGARD");
+			SrgsRule disregard = new SrgsRule("disregard");
+			disregard.Add(disregardItems);
+			RuleList.Add(disregard);
+
 			// COLLECTING ALL COMMANDS
 			SrgsOneOf subjectChoice = new SrgsOneOf();
 			subjectChoice.Add(new SrgsItem(new SrgsRuleRef(squadMembers)));
 			subjectChoice.Add(new SrgsItem(new SrgsRuleRef(all)));
+			subjectChoice.Add(new SrgsItem(new SrgsRuleRef(disregard)));
 
 			SrgsRule subject = new SrgsRule("subject");
 			subject.Add(subjectChoice);
@@ -73,73 +65,13 @@ namespace AVCI_Extension
 		{
 			InstructionList = new Dictionary<string, string>();
 
-			// INDIVIDUAL SELECTION
-			InstructionList.Add("ONE", "one");
-			InstructionList.Add("TWO", "two");
-			InstructionList.Add("THREE", "three");
-			InstructionList.Add("FOUR", "four");
-			InstructionList.Add("FIVE", "five");
-			InstructionList.Add("SIX", "six");
-			InstructionList.Add("SEVEN", "seven");
-			InstructionList.Add("EIGHT", "eight");
-			InstructionList.Add("NINE", "nine");
-			InstructionList.Add("TEN", "ten");
-			InstructionList.Add("ELEVEN", "eleven");
-			InstructionList.Add("TWELVE", "twelve");
-
-			// ALL
-			InstructionList.Add("ALL", "all");
-		}
-
-		private string GetTextFromInt(int i)
-		{
-			string number;
-
-			// Choose numerical text based on loop integer
-			switch (i)
+			for (int num = 1; num < 25; num++)
 			{
-				case 1:
-					number = "one";
-					break;
-				case 2:
-					number = "two";
-					break;
-				case 3:
-					number = "three";
-					break;
-				case 4:
-					number = "four";
-					break;
-				case 5:
-					number = "five";
-					break;
-				case 6:
-					number = "six";
-					break;
-				case 7:
-					number = "seven";
-					break;
-				case 8:
-					number = "eight";
-					break;
-				case 9:
-					number = "nine";
-					break;
-				case 10:
-					number = "ten";
-					break;
-				case 11:
-					number = "eleven";
-					break;
-				case 12:
-					number = "twelve";
-					break;
-				default:
-					number = "zero";
-					break;
+				InstructionList.Add(num.ToString().ToUpper(), num.ToString());
 			}
 
-			return number;
+			InstructionList.Add("ALL", "all");
+			InstructionList.Add("DISREGARD", "disregard");
 		}
 	}
 }

@@ -259,7 +259,7 @@ namespace AVCI_Extension
 		{
 			TriggerCommandAccepted(recognizedPhrase.Result.Words.Aggregate("", (phraseSoFar, word) => phraseSoFar + word.Text + " "), recognizedPhrase.Result.Confidence);
 
-			CommandList.Execute(recognizedPhrase.Result.Semantics);
+			CommandList.SendInstruction(recognizedPhrase.Result.Semantics);
 		}
 
 		private void SpeechRecognitionRejected(object sender, SpeechRecognitionRejectedEventArgs recognizedPhrase)
